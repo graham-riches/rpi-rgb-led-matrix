@@ -324,6 +324,10 @@ class RGBMatrix : public Canvas {
     bool StartRefresh();
 
   private:
+    // Used to be there to help user delay initialization of thread starting,
+    // these days only used internally.
+    void SetGPIO(GPIO* io, bool start_thread = true);
+
     void ApplyNamedPixelMappers(const char* pixel_mapper_config, int chain, int parallel);
     Options params_;
     bool do_luminance_correct_;

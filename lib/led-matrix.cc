@@ -51,9 +51,7 @@ class RGBMatrix::Impl {
     friend class UpdateThread;
 
   public:
-    // Used to be there to help user delay initialization of thread starting,
-    // these days only used internally.
-    void SetGPIO(GPIO* io, bool start_thread = true);
+    
 };
 
 using namespace internal;
@@ -377,13 +375,7 @@ RGBMatrix::Impl::~Impl() {
 }
 
 
-
-/* YOU ARE HERE */
-void RGBMatrix::Impl::OutputGPIO(uint64_t output_bits) {
-    io_->WriteMaskedBits(output_bits, user_output_bits_);
-}
-
-void RGBMatrix::Impl::ApplyNamedPixelMappers(const char* pixel_mapper_config, int chain, int parallel) {
+void RGBMatrix::ApplyNamedPixelMappers(const char* pixel_mapper_config, int chain, int parallel) {
     if ( pixel_mapper_config == NULL || strlen(pixel_mapper_config) == 0 )
         return;
     char* const writeable_copy = strdup(pixel_mapper_config);
@@ -407,7 +399,7 @@ void RGBMatrix::Impl::ApplyNamedPixelMappers(const char* pixel_mapper_config, in
     free(writeable_copy);
 }
 
-void RGBMatrix::Impl::SetGPIO(GPIO* io, bool start_thread) {
+void RGBMatrix::SetGPIO(GPIO* io, bool start_thread) {
     if ( io != NULL && io_ == NULL ) {
         io_ = io;
         Framebuffer::InitGPIO(io_,
@@ -424,7 +416,7 @@ void RGBMatrix::Impl::SetGPIO(GPIO* io, bool start_thread) {
     }
 }
 
-bool RGBMatrix::Impl::StartRefresh() {
+bool RGBMatrix::StartRefresh() {
     if ( updater_ == NULL && io_ != NULL ) {
         updater_ = new UpdateThread(io_, active_, params_.pwm_dither_bits, params_.show_refresh_rate, params_.limit_refresh_rate_hz);
         // If we have multiple processors, the kernel
@@ -439,7 +431,7 @@ bool RGBMatrix::Impl::StartRefresh() {
     return updater_ != NULL;
 }
 
-FrameCanvas* RGBMatrix::Impl::CreateFrameCanvas() {
+FrameCanvas* RGBMatrix::CreateFrameCanvas() {
     FrameCanvas* result = new FrameCanvas(new Framebuffer(params_.rows,
                                                           params_.cols * params_.chain_length,
                                                           params_.parallel,
@@ -460,7 +452,7 @@ FrameCanvas* RGBMatrix::Impl::CreateFrameCanvas() {
     return result;
 }
 
-FrameCanvas* RGBMatrix::Impl::SwapOnVSync(FrameCanvas* other, unsigned frame_fraction) {
+FrameCanvas* RGBMatrix::SwapOnVSync(FrameCanvas* other, unsigned frame_fraction) {
     if ( frame_fraction == 0 )
         frame_fraction = 1;  // correct user error.
     if ( !updater_ )
@@ -508,7 +500,7 @@ uint8_t RGBMatrix::Impl::brightness() {
     return params_.brightness;
 }
 
-bool RGBMatrix::Impl::ApplyPixelMapper(const PixelMapper* mapper) {
+bool RGBMatrix::ApplyPixelMapper(const PixelMapper* mapper) {
     if ( mapper == NULL )
         return true;
     using internal::PixelDesignatorMap;
@@ -629,7 +621,16 @@ std::unique_ptr<RGBMatrix> RGBMatrix::CreateFromOptions(const RGBMatrix::Options
     return std::make_unique<RGBMatrix>(result);
 }
 
-// Public interface.
+/**
+ * \brief create a RGBMatrix object directly from command line flags/switches
+ * 
+ * \param argc number of command line arguments
+ * \param argv 
+ * \param m_opt_in 
+ * \param rt_opt_in 
+ * \param remove_consumed_options 
+ * \retval std::unique_ptr<RGBMatrix> 
+ */
 std::unique_ptr<RGBMatrix> RGBMatrix::CreateFromFlags(int* argc, char*** argv, RGBMatrix::Options* m_opt_in, RuntimeOptions* rt_opt_in, bool remove_consumed_options) {
     RGBMatrix::Options scratch_matrix;
     RGBMatrix::Options* mopt = (m_opt_in != NULL) ? m_opt_in : &scratch_matrix;
@@ -640,18 +641,6 @@ std::unique_ptr<RGBMatrix> RGBMatrix::CreateFromFlags(int* argc, char*** argv, R
     if ( !ParseOptionsFromFlags(argc, argv, mopt, ropt, remove_consumed_options) )
         return NULL;
     return CreateFromOptions(*mopt, *ropt);
-}
-
-FrameCanvas* const RGBMatrix::CreateFrameCanvas() {
-    return impl_->CreateFrameCanvas();
-}
-
-FrameCanvas* const RGBMatrix::SwapOnVSync(FrameCanvas* other, unsigned framerate_fraction) {
-    return impl_->SwapOnVSync(other, framerate_fraction);
-}
-
-bool RGBMatrix::ApplyPixelMapper(const PixelMapper* mapper) {
-    return impl_->ApplyPixelMapper(mapper);
 }
 
 bool RGBMatrix::SetPWMBits(uint8_t value) {
@@ -689,11 +678,7 @@ uint64_t RGBMatrix::RequestOutputs(uint64_t all_interested_bits) {
     return success_bits;    
 }
 void RGBMatrix::OutputGPIO(uint64_t output_bits) {
-    impl_->OutputGPIO(output_bits);
-}
-
-bool RGBMatrix::StartRefresh() {
-    return impl_->StartRefresh();
+    gpio_ptr->WriteMaskedBits(output_bits, user_output_bits_);
 }
 
 // -- Implementation of RGBMatrix Canvas: delegation to ContentBuffer
