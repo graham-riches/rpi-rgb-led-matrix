@@ -127,6 +127,22 @@ static volatile uint32_t *s_CLK_registers = NULL;
 namespace rgb_matrix {
 #define GPIO_BIT(x) (1ull << x)
 
+
+/**
+ * \brief singleton method for getting a pointer to the main GPIO peripheral
+ * 
+ * \retval GPIO* 
+ */
+GPIO* GPIO::get() {
+    static GPIO gpio_handle;
+    return &gpio_handle;
+}
+
+/**
+ * \brief Construct a new GPIO::GPIO object.
+ * \note this constructor is private and access to the GPIO is only through the 
+ *       singleton getter
+ */
 GPIO::GPIO() : output_bits_(0), input_bits_(0), reserved_bits_(0),
                slowdown_(1)
 #ifdef ENABLE_WIDE_GPIO_COMPUTE_MODULE
