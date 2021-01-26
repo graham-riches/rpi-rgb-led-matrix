@@ -105,7 +105,7 @@ static bool ConsumeIntFlag(const char *flag_name,
 static bool ConsumeStringFlag(const char *flag_name,
                               argv_iterator &pos, const argv_iterator end,
                               const char **result_value, int *error) {
-  const char *option = *pos;
+  const char *option = *pos;  
   if (strncmp(option, OPTION_PREFIX, OPTION_PREFIX_LEN) != 0)
     return false;
   option += OPTION_PREFIX_LEN;
@@ -136,14 +136,14 @@ static bool FlagInit(int &argc, char **&argv,
   argv_iterator end = it + argc;
 
   std::vector<char*> unused_options;
-  unused_options.push_back(*it++);  // Not interested in program name
+  //unused_options.push_back(*it++);  // Not interested in program name
 
   bool bool_scratch;
   int err = 0;
   bool posix_end_option_seen = false;  // end of options '--'
   for (/**/; it < end; ++it) {
     posix_end_option_seen |= (strcmp(*it, "--") == 0);
-    if (!posix_end_option_seen) {
+    if (!posix_end_option_seen) {      
       if (ConsumeStringFlag("gpio-mapping", it, end,
                             &mopts->hardware_mapping, &err))
         continue;
@@ -250,11 +250,11 @@ static bool FlagInit(int &argc, char **&argv,
 
 }  // anonymous namespace
 
-bool ParseOptionsFromFlags(int *argc, char ***argv,
+bool ParseOptionsFromFlags(int argc, char ***argv,
                            RGBMatrix::Options *m_opt_in,
                            RuntimeOptions *rt_opt_in,
                            bool remove_consumed_options) {
-  if (argc == NULL || argv == NULL) {
+  if (argv == NULL) {
     fprintf(stderr, "Called ParseOptionsFromFlags() without argc/argv\n");
     return false;
   }
@@ -265,7 +265,7 @@ bool ParseOptionsFromFlags(int *argc, char ***argv,
   RuntimeOptions scratch_rt;
   RuntimeOptions *ropt = (rt_opt_in != NULL) ? rt_opt_in : &scratch_rt;
 
-  return FlagInit(*argc, *argv, mopt, ropt, remove_consumed_options);
+  return FlagInit(argc, *argv, mopt, ropt, remove_consumed_options);
 }
 
 static std::string CreateAvailableMultiplexString(

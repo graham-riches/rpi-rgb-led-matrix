@@ -157,7 +157,7 @@ SwsContext *CreateSWSContext(const AVCodecContext *codec_ctx,
 int main(int argc, char *argv[]) {
   RGBMatrix::Options matrix_options;
   rgb_matrix::RuntimeOptions runtime_opt;
-  if (!rgb_matrix::ParseOptionsFromFlags(&argc, &argv,
+  if (!rgb_matrix::ParseOptionsFromFlags(argc, &argv,
                                          &matrix_options, &runtime_opt)) {
     return usage(argv[0]);
   }

@@ -1070,7 +1070,7 @@ int main(int argc, char *argv[]) {
 
   // First things first: extract the command line flags that contain
   // relevant matrix options.
-  if (!ParseOptionsFromFlags(&argc, &argv, &matrix_options, &runtime_opt)) {
+  if (!ParseOptionsFromFlags(argc, &argv, &matrix_options, &runtime_opt)) {
     return usage(argv[0]);
   }
 

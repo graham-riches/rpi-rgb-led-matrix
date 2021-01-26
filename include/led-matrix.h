@@ -444,7 +444,7 @@ int main(int argc, char **argv) {
   led_options.chain_length = 3;
   led_options.show_refresh_rate = true;
   runtime.drop_privileges = 1;
-  if (!rgb_matrix::ParseOptionsFromFlags(&argc, &argv, &led_options, &runtime)) {
+  if (!rgb_matrix::ParseOptionsFromFlags(argc, &argv, &led_options, &runtime)) {
     rgb_matrix::PrintMatrixFlags(stderr);
     return 1;
   }
@@ -471,7 +471,7 @@ int main(int argc, char **argv) {
 // true; this simplifies your command line processing for the remaining options.
 //
 // Returns 'true' on success, 'false' if there was flag parsing problem.
-bool ParseOptionsFromFlags(int *argc, char ***argv,
+bool ParseOptionsFromFlags(int argc, char ***argv,
                            RGBMatrix::Options *default_options,
                            RuntimeOptions *rt_options,
                            bool remove_consumed_flags = true);

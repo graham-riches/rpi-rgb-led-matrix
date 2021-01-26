@@ -101,7 +101,7 @@ static struct RGBLedMatrix *led_matrix_create_from_options_optional_edit(
   rgb_matrix::RGBMatrix::Options matrix_options = default_opts;
   rgb_matrix::RuntimeOptions runtime_opt = default_rt;
   if (argc != NULL && argv != NULL) {
-    if (!ParseOptionsFromFlags(argc, argv, &matrix_options, &runtime_opt,
+    if (!ParseOptionsFromFlags(*argc, argv, &matrix_options, &runtime_opt,
                                remove_consumed_flags)) {
       rgb_matrix::PrintMatrixFlags(stderr, default_opts, default_rt);
       return NULL;

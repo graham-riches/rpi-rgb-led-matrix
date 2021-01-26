@@ -664,7 +664,7 @@ RGBMatrix *RGBMatrix::CreateFromFlags(int *argc, char ***argv,
   RuntimeOptions scratch_rt;
   RuntimeOptions *ropt = (rt_opt_in != NULL) ? rt_opt_in : &scratch_rt;
 
-  if (!ParseOptionsFromFlags(argc, argv, mopt, ropt, remove_consumed_options))
+  if (!ParseOptionsFromFlags(*argc, argv, mopt, ropt, remove_consumed_options))
     return NULL;
   return CreateFromOptions(*mopt, *ropt);
 }
