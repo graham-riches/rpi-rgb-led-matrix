@@ -477,7 +477,7 @@ bool RGBMatrix::Impl::StartRefresh() {
     //   core #3 will succeed.
     // The Raspberry Pi1 only has one core, so this affinity
     //   call will simply fail and we keep using the only core.
-    updater_->Start(99, (1<<3));  // Prio: high. Also: put on last CPU.
+    updater_->Start(95, (1<<3));  // Prio: high. Also: put on last CPU.
   }
   return updater_ != NULL;
 }
